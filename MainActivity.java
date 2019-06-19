@@ -48,10 +48,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     int year;
     int month;
     int day;
-    int hourStart;
-    int minuteStart;
-    int minuteEnd;
-    int hourEnd;
+    int timeStart;
+    int timeEnd;
 
 
     @Override
@@ -80,7 +78,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (selectedTheatre != null) {
             String movieurl = "http://www.finnkino.fi/xml/Schedule/?area=" + selectedTheatre.getID() + "&dt=" + current;
             System.out.println(movieurl);
-            new XMLParserMovies(this, movieurl).execute();
+            System.out.println(timeStart + timeEnd);
+            new XMLParserMovies(this, movieurl, timeStart, timeEnd).execute();
         }
     }
 
@@ -103,12 +102,48 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    public void doClockStart(){
-        EditText editTextTimeStart = (EditText) findViewById(R.id.editTextStartTime);
+    public void doClockStart() {
+        final EditText editTextTimeStart = (EditText) findViewById(R.id.editTextStartTime);
+        final Calendar cal = Calendar.getInstance();
+        final SimpleDateFormat df = new SimpleDateFormat("hh:mm");
+        final String date_str = df.format(cal.getTime());
+        editTextTimeStart.setText(date_str);
+
+        TextWatcher tw = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                String time_start = editTextTimeStart.getText().toString();
+                if(time_start.length() == 5){
+                    time_start = time_start.replace(":", "");
+                    timeStart = Integer.parseInt(time_start);
+                    String value = String.format("%d:%d",time_start.substring(0,2),time_start.substring(2,0));
+                    editTextTimeStart.setText(value);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        };
     }
 
     public void doClockEnd(){
-        EditText editTextEndTime = findViewById(R.id.editTextEndTime);
+        final EditText editTextEndTime = findViewById(R.id.editTextEndTime);
+        final Calendar cal = Calendar.getInstance();
+        final SimpleDateFormat df = new SimpleDateFormat("hh:mm");
+        String time_str = editTextEndTime.getText().toString();
+        if(time_str.length() == 5) {
+            time_str = time_str.replace(":", "");
+            timeEnd = Integer.parseInt(time_str);
+        }
     }
 
     public void doCalendar(){

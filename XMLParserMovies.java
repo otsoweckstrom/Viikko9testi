@@ -34,11 +34,15 @@ public class XMLParserMovies extends AsyncTask<ArrayList<String>, Void, ArrayLis
     private MainActivity activity;
     private XmlPullParserFactory factory;
     private String url;
+    private int timeStart;
+    private int timeEnd;
 
 
-    public XMLParserMovies(MainActivity activity, String url) {
+    public XMLParserMovies(MainActivity activity, String url, int timeStart, int timeEnd) {
         this.activity = activity;
         this.url = url;
+        this.timeEnd = timeEnd;
+        this.timeStart = timeStart;
     }
 
     @Override
@@ -82,6 +86,8 @@ public class XMLParserMovies extends AsyncTask<ArrayList<String>, Void, ArrayLis
         int event;
         ArrayList<String> movies = new ArrayList<String>();
         String text = null;
+        String title = "";
+        String ShowStart = "";
         event = parser.getEventType();
 
 
@@ -91,7 +97,11 @@ public class XMLParserMovies extends AsyncTask<ArrayList<String>, Void, ArrayLis
             switch (event) {
                 case XmlPullParser.START_TAG:
                     if (name.equalsIgnoreCase("Title")) {
-                        movies.add(parser.nextText()+"\n");
+                        title = (parser.nextText());
+                        movies.add(title + " " + ShowStart);
+                    }else if (name.equalsIgnoreCase("dttmShowStart")) {
+                        ShowStart = parser.nextText();
+                        ShowStart = ShowStart.substring(11,16);
                     }
                     break;
                 case XmlPullParser.TEXT:
